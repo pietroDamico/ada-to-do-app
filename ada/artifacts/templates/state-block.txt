@@ -1,0 +1,14 @@
+STATE (YYYY-MM-DD)
+Scope: <repo/project name or module>  |  Release/Milestone: <optional>  |  Token Budget: <S|M|L>
+
+Decisions (latest)
+- D-###: <decision> (status: proposed|accepted) — owner: <human|HL>
+
+Epics
+- E-### <Epic title> — <status: intake|decomposed|in-progress|review|done>
+  - TSK-### <Task title> — <status> — owner: <LL-x|human|HL> — deps: <TSK-###,...> — risk: <L|M|H>
+
+Next 3 actions
+1) <action>
+2) <action>
+3) <action>

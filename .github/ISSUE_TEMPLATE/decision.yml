@@ -1,0 +1,95 @@
+name: Decision
+description: Record an important project decision (can be promoted to an ADR).
+title: "Decision: <short title>"
+labels:
+  - decision
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Decision Record (ADA)
+        Use this when there are multiple plausible options, or when an explicit choice is needed to avoid rework.
+        Lightweight decisions can stay here; long-lived/high-impact ones should be promoted to an ADR under `ada/artifacts/project/adr/`.
+
+  - type: input
+    id: decision_id
+    attributes:
+      label: Decision ID (optional)
+      description: If tracked in State Block, use D-### (e.g., D-001).
+      placeholder: "D-001"
+    validations:
+      required: false
+
+  - type: input
+    id: context_links
+    attributes:
+      label: Context links (optional)
+      description: Link related Epic/Task/REQ/PR.
+      placeholder: "Epic #123 | Task #456 | REQ-001 | PR #789"
+    validations:
+      required: false
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / Context
+      description: What are we deciding and why does it matter?
+      placeholder: |
+        We need to decide ...
+        Constraints: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: decision
+    attributes:
+      label: Decision (recommended default)
+      description: The proposed/selected choice stated clearly.
+      placeholder: "We will ..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: options
+    attributes:
+      label: Options considered (≤3) + trade-offs
+      description: Keep each option to 1–2 trade-offs.
+      placeholder: |
+        1) Option A — pros/cons
+        2) Option B — pros/cons
+        3) Option C — pros/cons
+    validations:
+      required: true
+
+  - type: dropdown
+    id: status
+    attributes:
+      label: Status
+      options:
+        - Proposed
+        - Accepted
+        - Deprecated
+        - Superseded
+    validations:
+      required: true
+
+  - type: textarea
+    id: consequences
+    attributes:
+      label: Consequences / Follow-ups
+      description: Impact, risks, migrations, docs, tasks to create.
+      placeholder: |
+        - Positive:
+        - Negative:
+        - Follow-ups:
+    validations:
+      required: false
+
+  - type: input
+    id: adr
+    attributes:
+      label: ADR (optional)
+      description: If promoted, link the ADR file path (e.g., ada/artifacts/project/adr/0002-....md).
+      placeholder: "ada/artifacts/project/adr/0002-....md"
+    validations:
+      required: false

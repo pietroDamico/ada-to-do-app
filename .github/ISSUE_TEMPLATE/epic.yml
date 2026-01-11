@@ -1,0 +1,115 @@
+name: Epic
+description: Create an Epic to group requirements and tasks (macro-scope + DoD).
+title: "Epic: <name>"
+labels:
+  - epic
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Epic (ADA)
+        Epics are macro work items grouping multiple tasks and requirements.
+        Keep this concise and link to requirements. Tasks should be created separately via the Task form.
+
+  - type: input
+    id: requirements
+    attributes:
+      label: Covered Requirements (REQ-IDs)
+      description: Comma-separated REQ IDs covered by this epic.
+      placeholder: "REQ-001, REQ-002, REQ-005"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - P0 (must-have)
+        - P1 (should-have)
+        - P2 (nice-to-have)
+    validations:
+      required: true
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What this epic delivers (2–4 sentences max).
+      placeholder: "This epic delivers ..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope_in
+    attributes:
+      label: In scope
+      placeholder: |
+        - ...
+        - ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope_out
+    attributes:
+      label: Out of scope
+      placeholder: |
+        - ...
+        - ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies (optional)
+      description: Other epics/tasks/REQs that block this epic.
+      placeholder: |
+        - Epic: #...
+        - Task: #...
+        - REQ-...
+    validations:
+      required: false
+
+  - type: textarea
+    id: decisions_assumptions
+    attributes:
+      label: Key decisions / assumptions (optional)
+      description: Link to Decision issues or ADRs if applicable.
+      placeholder: |
+        - Decision: #...
+        - ADR: ada/artifacts/project/adr/0001-....md
+    validations:
+      required: false
+
+  - type: textarea
+    id: risks
+    attributes:
+      label: Major risks (optional)
+      placeholder: |
+        - ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: dod
+    attributes:
+      label: Definition of Done (verifiable)
+      description: What must be true for the epic to be complete.
+      placeholder: |
+        - ...
+        - ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: child_tasks
+    attributes:
+      label: Child tasks (links)
+      description: Link or list task issues (can be filled progressively).
+      placeholder: |
+        - #...
+        - #...
+    validations:
+      required: false

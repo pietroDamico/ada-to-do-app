@@ -1,0 +1,40 @@
+Title: <verb> <object> (REQ-###[, REQ-###])
+
+Context
+- Epic: E-###
+- Requirements: REQ-###
+- ada/artifacts/Links: <paths or links, no pasted text>
+
+Goal (1 sentence)
+- <what success looks like>
+
+Scope
+IN:
+- <max 2 bullets>
+OUT:
+- <max 2 bullets>
+
+Acceptance Criteria (verifiable)
+- AC1: <observable outcome>
+- AC2: <observable outcome>
+- AC3: <observable outcome>
+- (4–7 total)
+
+Files to touch (expected)
+- <path>
+- <path>
+
+Tests
+- Must add/adjust:
+  - <test case>
+  - <test case>
+- Commands (if known):
+  - `<cmd>`
+
+Constraints
+- <stack/style/perf/security constraints, max 3 bullets>
+
+Definition of Done
+- [ ] Meets all ACs
+- [ ] Tests added/updated and passing (or commands provided)
+- [ ] No scope creep; diff kept minimal

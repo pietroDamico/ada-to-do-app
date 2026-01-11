@@ -1,0 +1,175 @@
+name: Task
+description: Create an implementation task for an LL agent (bounded scope, verifiable ACs).
+title: "<verb> <object> (REQ-###)"
+labels:
+  - task
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Task Brief (ADA)
+        Fill this issue using the canonical format in `ada/artifacts/templates/brief-template.txt`.
+        Do **not** paste the whole template here—just fill the fields below.
+
+  - type: input
+    id: epic
+    attributes:
+      label: Epic
+      description: Link the parent Epic issue (e.g., #123).
+      placeholder: "#123"
+    validations:
+      required: true
+
+  - type: input
+    id: requirements
+    attributes:
+      label: Requirements (REQ-IDs)
+      description: Comma-separated requirement IDs this task implements (e.g., REQ-001, REQ-004).
+      placeholder: "REQ-001, REQ-004"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - P0 (must-have)
+        - P1 (should-have)
+        - P2 (nice-to-have)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: token_budget
+    attributes:
+      label: Token Budget (optional)
+      description: Use to constrain verbosity / iteration loops.
+      options:
+        - S
+        - M
+        - L
+    validations:
+      required: false
+
+  - type: input
+    id: owner
+    attributes:
+      label: Owner / Assignee (agent id)
+      description: Suggested assignee label (e.g., ll-1, ll-2) or GitHub username.
+      placeholder: "ll-1"
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context (links only)
+      description: Link docs, code areas, prior issues/PRs. Avoid long pasted context.
+      placeholder: |
+        - Docs: ada/artifacts/project/capsule.md
+        - Spec: ada/artifacts/project/requirements/product.md#REQ-001
+        - Related: #456
+    validations:
+      required: false
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal (1 sentence)
+      description: What success looks like.
+      placeholder: "Implement ... so that ..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope_in
+    attributes:
+      label: Scope IN
+      description: What is included (max 2–3 bullets).
+      placeholder: |
+        - ...
+        - ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope_out
+    attributes:
+      label: Scope OUT
+      description: What is explicitly excluded (max 2–3 bullets).
+      placeholder: |
+        - ...
+        - ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria (verifiable)
+      description: 4–7 bullets, observable outcomes (not subjective quality statements).
+      placeholder: |
+        - AC1: ...
+        - AC2: ...
+        - AC3: ...
+        - AC4: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: files
+    attributes:
+      label: Files to touch (expected)
+      description: Best-guess list of paths/modules to reduce search time.
+      placeholder: |
+        - src/...
+        - tests/...
+    validations:
+      required: false
+
+  - type: textarea
+    id: tests
+    attributes:
+      label: Tests
+      description: What tests must be added/updated and how to run them.
+      placeholder: |
+        Must add/adjust:
+        - ...
+        - ...
+        Commands:
+        - `...`
+    validations:
+      required: true
+
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints
+      description: Max 3 bullets (style, perf, security, compatibility).
+      placeholder: |
+        - ...
+        - ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks / Edge cases (optional)
+      placeholder: |
+        - ...
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: dod
+    attributes:
+      label: Definition of Done
+      options:
+        - label: Meets all acceptance criteria
+          required: true
+        - label: Tests added/updated and passing (or commands provided)
+          required: true
+        - label: Diff kept minimal; no scope creep
+          required: true
