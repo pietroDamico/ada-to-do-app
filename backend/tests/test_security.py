@@ -1,8 +1,15 @@
 """Tests for security utilities."""
 
+from datetime import timedelta
+
 import pytest
 
-from app.core.security import hash_password, verify_password
+from app.core.security import (
+    create_access_token,
+    decode_access_token,
+    hash_password,
+    verify_password,
+)
 
 
 class TestPasswordHashing:
@@ -69,4 +76,62 @@ class TestPasswordHashing:
         hashed = hash_password(password)
         
         assert verify_password(password, hashed) is True
+
+
+class TestJWTTokens:
+    """Test cases for JWT token functions."""
+
+    def test_create_access_token_returns_string(self):
+        """Test that create_access_token returns a JWT string."""
+        token = create_access_token(data={"sub": "123"})
+        
+        assert token is not None
+        assert isinstance(token, str)
+        assert len(token) > 0
+        # JWT tokens have 3 parts separated by dots
+        assert token.count(".") == 2
+
+    def test_decode_access_token_valid(self):
+        """Test decoding a valid token."""
+        data = {"sub": "user123", "custom": "value"}
+        token = create_access_token(data=data)
+        
+        payload = decode_access_token(token)
+        
+        assert payload is not None
+        assert payload["sub"] == "user123"
+        assert payload["custom"] == "value"
+        assert "exp" in payload
+
+    def test_decode_access_token_invalid(self):
+        """Test decoding an invalid token returns None."""
+        invalid_token = "invalid.token.here"
+        
+        payload = decode_access_token(invalid_token)
+        
+        assert payload is None
+
+    def test_decode_access_token_expired(self):
+        """Test that expired token returns None."""
+        # Create token with very short expiration
+        token = create_access_token(
+            data={"sub": "123"},
+            expires_delta=timedelta(seconds=-1),  # Already expired
+        )
+        
+        payload = decode_access_token(token)
+        
+        assert payload is None
+
+    def test_create_access_token_custom_expiration(self):
+        """Test creating token with custom expiration."""
+        token = create_access_token(
+            data={"sub": "123"},
+            expires_delta=timedelta(hours=1),
+        )
+        
+        payload = decode_access_token(token)
+        
+        assert payload is not None
+        assert payload["sub"] == "123"
 

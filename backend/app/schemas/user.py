@@ -18,3 +18,17 @@ class UserResponse(BaseModel):
 
     model_config = {"from_attributes": True}
 
+
+class UserLogin(BaseModel):
+    """Schema for user login request."""
+
+    username: str = Field(..., description="Username")
+    password: str = Field(..., description="Password")
+
+
+class Token(BaseModel):
+    """Schema for JWT token response."""
+
+    access_token: str = Field(..., description="JWT access token")
+    token_type: str = Field(default="bearer", description="Token type")
+

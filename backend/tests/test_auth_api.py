@@ -131,3 +131,77 @@ class TestRegistration:
         )
         assert response.status_code == 422
 
+
+class TestLogin:
+    """Test cases for user login endpoint."""
+
+    @pytest.mark.asyncio
+    async def test_login_success(self, client):
+        """Test successful login returns JWT token."""
+        # First register a user
+        await client.post(
+            "/api/auth/register",
+            json={"username": "loginuser", "password": "testpass123"},
+        )
+
+        # Then login
+        response = await client.post(
+            "/api/auth/login",
+            json={"username": "loginuser", "password": "testpass123"},
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert "access_token" in data
+        assert data["token_type"] == "bearer"
+        assert len(data["access_token"]) > 0
+
+    @pytest.mark.asyncio
+    async def test_login_invalid_username(self, client):
+        """Test login with non-existent username returns 401."""
+        response = await client.post(
+            "/api/auth/login",
+            json={"username": "nonexistent", "password": "testpass123"},
+        )
+        assert response.status_code == 401
+        assert "invalid" in response.json()["detail"].lower()
+
+    @pytest.mark.asyncio
+    async def test_login_invalid_password(self, client):
+        """Test login with wrong password returns 401."""
+        # First register a user
+        await client.post(
+            "/api/auth/register",
+            json={"username": "wrongpassuser", "password": "correctpass"},
+        )
+
+        # Try to login with wrong password
+        response = await client.post(
+            "/api/auth/login",
+            json={"username": "wrongpassuser", "password": "wrongpass"},
+        )
+        assert response.status_code == 401
+        assert "invalid" in response.json()["detail"].lower()
+
+    @pytest.mark.asyncio
+    async def test_login_token_contains_user_id(self, client):
+        """Test that login token contains user_id claim."""
+        from app.core.security import decode_access_token
+
+        # Register and login
+        register_response = await client.post(
+            "/api/auth/register",
+            json={"username": "tokenuser", "password": "testpass123"},
+        )
+        user_id = register_response.json()["id"]
+
+        login_response = await client.post(
+            "/api/auth/login",
+            json={"username": "tokenuser", "password": "testpass123"},
+        )
+        token = login_response.json()["access_token"]
+
+        # Decode and verify token
+        payload = decode_access_token(token)
+        assert payload is not None
+        assert payload["sub"] == str(user_id)
+
