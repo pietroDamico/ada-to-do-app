@@ -205,3 +205,109 @@ class TestLogin:
         assert payload is not None
         assert payload["sub"] == str(user_id)
 
+
+class TestGetCurrentUser:
+    """Test cases for JWT auth dependency (get_current_user) via /me endpoint."""
+
+    @pytest.mark.asyncio
+    async def test_get_me_with_valid_token(self, client):
+        """Test /me endpoint returns current user with valid JWT."""
+        # Register and login to get token
+        register_response = await client.post(
+            "/api/auth/register",
+            json={"username": "meuser", "password": "testpass123"},
+        )
+        user_id = register_response.json()["id"]
+
+        login_response = await client.post(
+            "/api/auth/login",
+            json={"username": "meuser", "password": "testpass123"},
+        )
+        token = login_response.json()["access_token"]
+
+        # Call /me with valid token
+        response = await client.get(
+            "/api/auth/me",
+            headers={"Authorization": f"Bearer {token}"},
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["id"] == user_id
+        assert data["username"] == "meuser"
+
+    @pytest.mark.asyncio
+    async def test_get_me_missing_token(self, client):
+        """Test /me endpoint returns 403 without Authorization header."""
+        response = await client.get("/api/auth/me")
+        assert response.status_code == 403
+
+    @pytest.mark.asyncio
+    async def test_get_me_invalid_token(self, client):
+        """Test /me endpoint returns 401 with invalid JWT."""
+        response = await client.get(
+            "/api/auth/me",
+            headers={"Authorization": "Bearer invalidtoken123"},
+        )
+        assert response.status_code == 401
+        assert "credentials" in response.json()["detail"].lower()
+
+    @pytest.mark.asyncio
+    async def test_get_me_expired_token(self, client):
+        """Test /me endpoint returns 401 with expired JWT."""
+        from datetime import timedelta
+        from app.core.security import create_access_token
+
+        # Create an already expired token
+        expired_token = create_access_token(
+            data={"sub": "1"},
+            expires_delta=timedelta(seconds=-1),  # Already expired
+        )
+
+        response = await client.get(
+            "/api/auth/me",
+            headers={"Authorization": f"Bearer {expired_token}"},
+        )
+        assert response.status_code == 401
+
+    @pytest.mark.asyncio
+    async def test_get_me_token_for_nonexistent_user(self, client):
+        """Test /me endpoint returns 401 when user_id in token doesn't exist."""
+        from app.core.security import create_access_token
+
+        # Create a token for a user ID that doesn't exist
+        fake_token = create_access_token(data={"sub": "99999"})
+
+        response = await client.get(
+            "/api/auth/me",
+            headers={"Authorization": f"Bearer {fake_token}"},
+        )
+        assert response.status_code == 401
+
+    @pytest.mark.asyncio
+    async def test_get_me_token_missing_sub_claim(self, client):
+        """Test /me endpoint returns 401 when token has no 'sub' claim."""
+        from app.core.security import create_access_token
+
+        # Create a token without user_id claim
+        bad_token = create_access_token(data={"foo": "bar"})
+
+        response = await client.get(
+            "/api/auth/me",
+            headers={"Authorization": f"Bearer {bad_token}"},
+        )
+        assert response.status_code == 401
+
+    @pytest.mark.asyncio
+    async def test_get_me_token_invalid_sub_format(self, client):
+        """Test /me endpoint returns 401 when sub claim is not a valid int."""
+        from app.core.security import create_access_token
+
+        # Create a token with non-integer sub claim
+        bad_token = create_access_token(data={"sub": "not-a-number"})
+
+        response = await client.get(
+            "/api/auth/me",
+            headers={"Authorization": f"Bearer {bad_token}"},
+        )
+        assert response.status_code == 401
+

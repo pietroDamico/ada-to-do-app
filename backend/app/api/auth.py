@@ -5,6 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import create_access_token
 from app.db.database import get_db
+from app.dependencies import get_current_user
+from app.models.user import User
 from app.schemas.user import Token, UserCreate, UserLogin, UserResponse
 from app.services.auth import authenticate_user, create_user, get_user_by_username
 
@@ -71,4 +73,21 @@ async def login(
     # Create JWT token with user_id claim
     access_token = create_access_token(data={"sub": str(user.id)})
     return Token(access_token=access_token)
+
+
+@router.get("/me", response_model=UserResponse)
+async def get_me(
+    current_user: User = Depends(get_current_user),
+) -> UserResponse:
+    """Get current authenticated user.
+
+    This endpoint demonstrates the get_current_user dependency.
+
+    Args:
+        current_user: The authenticated user from JWT token.
+
+    Returns:
+        Current user data (id, username).
+    """
+    return UserResponse.model_validate(current_user)
 
